@@ -340,6 +340,7 @@ export function AtlasDetail({
           {/* Primary CTA: Custom Made */}
           <a
             href={`/crystals/custom/?stone=${stone.slug}`}
+            target="_top"
             className="atlas-cta atlas-cta--custom group flex items-center justify-between px-5 py-3.5 rounded-xl font-medium tracking-[0.08em] transition-all bg-[#14243b] text-white hover:bg-[#1e3a5f] shadow-[0_4px_16px_rgba(20,36,59,0.14)] hover:scale-[1.01]"
           >
             <span className="flex items-center gap-2">

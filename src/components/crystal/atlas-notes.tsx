@@ -185,6 +185,7 @@ export function AtlasNotes({
             <div className="flex flex-col gap-2 mt-4">
               <a
                 href={`/crystals/custom/?stone=${pair.a.slug}&accent=${pair.b.slug}`}
+                target="_top"
                 className="atlas-cta atlas-pairday__cta group flex items-center justify-between px-4 py-3 rounded-xl bg-[#14243b] text-white font-medium hover:bg-[#1e3a5f] shadow-[0_4px_16px_rgba(20,36,59,0.14)] hover:scale-[1.01] transition-all"
                 aria-label={dict.customMadePairCta(stoneName(pair.b.slug, pair.b.displayName))}
               >

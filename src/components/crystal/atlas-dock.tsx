@@ -261,6 +261,7 @@ export function AtlasDock({
         </button>
         <a
           href="/crystals/custom/"
+          target="_top"
           className="atlas-dock__tool atlas-dock__tool--custom text-[#c58b8e] hover:text-[#14243b]"
           aria-label={dict.customMadeDirect}
           title={dict.customMadeDirect}

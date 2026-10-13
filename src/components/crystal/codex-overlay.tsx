@@ -419,6 +419,7 @@ export function CodexOverlay({
                     </button>
                     <a
                       href={`/crystals/custom/?stone=${s.slug}`}
+                      target="_top"
                       className="codex-card__cta codex-card__cta--custom flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#14243b] hover:bg-[#1e3a5f] text-white text-[0.72rem] tracking-wider transition-all border border-[#14243b] shadow-[0_4px_16px_rgba(20,36,59,0.14)]"
                       title={dict.customMadeCta(nameOf(s))}
                     >

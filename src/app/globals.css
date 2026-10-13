@@ -112,6 +112,20 @@
   overflow-x: clip;
 }
 
+/* Seamless Iframe Embed Mode */
+html.atlas-embedded,
+html.atlas-embedded body {
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+html.atlas-embedded .atlas-shell {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
 /* Announcement ticker */
 .atlas-ticker {
   background: var(--navy-deep);
