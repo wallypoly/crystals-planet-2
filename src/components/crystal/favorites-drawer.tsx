@@ -144,10 +144,10 @@ export function FavoritesDrawer({
                       >
                         {family} {material}
                       </p>
-                      <p className="truncate font-[var(--font-cormorant)] text-[1.15rem] text-[#f6eee2]">
+                      <p className="truncate font-[var(--font-cormorant)] text-[1.15rem] text-[#14243b]">
                         {name}
                       </p>
-                      <p className="text-[0.6rem] tracking-[0.14em] text-[rgba(239,233,221,0.5)]">
+                      <p className="text-[0.6rem] tracking-[0.14em] text-[rgba(30,58,95,0.42)]">
                         {stone.availableMm.join(", ")} mm · Mohs {stone.hardness}
                       </p>
                     </div>

@@ -119,9 +119,9 @@ async function exportBraceletPng(opts: {
 
     // Backdrop
     const bg = ctx.createRadialGradient(600, 540, 90, 600, 560, 940);
-    bg.addColorStop(0, "#1a1512");
-    bg.addColorStop(0.55, "#12100d");
-    bg.addColorStop(1, "#0a0807");
+    bg.addColorStop(0, "#ffffff");
+    bg.addColorStop(0.6, "#fbfbfa");
+    bg.addColorStop(1, "#f2f4f8");
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, 1200, 1490);
 
@@ -132,20 +132,20 @@ async function exportBraceletPng(opts: {
     ctx.textAlign = "center";
     (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
       "6px";
-    ctx.fillStyle = "#a99068";
+    ctx.fillStyle = "#1e3a5f";
     ctx.font = "500 22px Manrope, sans-serif";
     ctx.fillText(subtitle.toUpperCase(), 600, 1224);
     (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
       "0px";
-    ctx.fillStyle = "#f0e7d6";
+    ctx.fillStyle = "#14243b";
     ctx.font = "600 44px " + '"Cormorant Garamond", serif';
     ctx.fillText(title, 600, 1288);
-    ctx.fillStyle = "rgba(239, 233, 221, 0.55)";
+    ctx.fillStyle = "rgba(30, 58, 95, 0.65)";
     ctx.font = "400 24px Manrope, sans-serif";
     ctx.fillText(stats, 600, 1340);
 
-    // Thin gold divider above the footer block
-    ctx.fillStyle = "rgba(169, 144, 104, 0.4)";
+    // Thin navy divider above the footer block
+    ctx.fillStyle = "rgba(30, 58, 95, 0.12)";
     ctx.fillRect(430, 1188, 340, 1);
 
     // QR code of the share link, bottom-right corner
@@ -154,7 +154,7 @@ async function exportBraceletPng(opts: {
         const qrData = await QRCode.toDataURL(shareUrl, {
           margin: 0,
           width: 232,
-          color: { dark: "#141009", light: "#f3ecdd" },
+          color: { dark: "#14243b", light: "#ffffff" },
         });
         const qr = new Image();
         await new Promise<void>((resolve, reject) => {
@@ -165,16 +165,16 @@ async function exportBraceletPng(opts: {
         const qs = 116; // QR box size on the card
         const qx = 1200 - 56 - qs;
         const qy = 1246;
-        // Cream rounded backing so the code scans cleanly on the dark card
+        // White rounded backing so the code scans cleanly
         ctx.save();
-        ctx.fillStyle = "#f3ecdd";
+        ctx.fillStyle = "#ffffff";
         ctx.beginPath();
         if (typeof ctx.roundRect === "function") {
           ctx.roundRect(qx - 12, qy - 12, qs + 24, qs + 24, 16);
         } else {
           ctx.rect(qx - 12, qy - 12, qs + 24, qs + 24);
         }
-        ctx.shadowColor = "rgba(0,0,0,0.45)";
+        ctx.shadowColor = "rgba(30, 58, 95, 0.08)";
         ctx.shadowBlur = 18;
         ctx.fill();
         ctx.restore();
@@ -182,7 +182,7 @@ async function exportBraceletPng(opts: {
         ctx.textAlign = "center";
         (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing =
           "3px";
-        ctx.fillStyle = "rgba(246, 238, 226, 0.6)";
+        ctx.fillStyle = "rgba(30, 58, 95, 0.65)";
         ctx.font = "500 15px Manrope, sans-serif";
         ctx.fillText(qrCaption.toUpperCase(), qx + qs / 2, qy + qs + 38);
       } catch {
@@ -229,9 +229,9 @@ async function exportBraceletPng(opts: {
           // count badge
           ctx.beginPath();
           ctx.arc(ix + size / 2 - 2, iy - size / 2 + 2, 9, 0, Math.PI * 2);
-          ctx.fillStyle = "#f3ecdd";
+          ctx.fillStyle = "#14243b";
           ctx.fill();
-          ctx.fillStyle = "#141009";
+          ctx.fillStyle = "#ffffff";
           ctx.font = "600 12px Manrope, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -481,7 +481,12 @@ export function BraceletStudio({
       // Repeat the most common bead until reaching the wrist length.
       const mode = prev.reduce((acc, b) => {
         const key = `${b.slug}|${b.mm}`;
-        acc.set(key, (acc.get(key) ?? 0) + 1);
+        const cur = acc.get(key);
+        if (cur) {
+          cur.n += 1;
+        } else {
+          acc.set(key, { slug: b.slug, mm: b.mm, n: 1 });
+        }
         return acc;
       }, new Map<string, { slug: string; mm: number; n: number }>());
       let best = { slug: prev[0].slug, mm: prev[0].mm, n: 0 };
@@ -658,7 +663,7 @@ export function BraceletStudio({
       return {
         src: stone?.imagePath ?? "",
         count,
-        color: stone?.palette[1] ?? "#a99068",
+        color: stone?.palette[1] ?? "#1e3a5f",
       };
     });
     const ok = await exportBraceletPng({
@@ -728,7 +733,7 @@ export function BraceletStudio({
                   cy="280"
                   r={Math.max(stringR, 1)}
                   fill="none"
-                  stroke="rgba(246,238,226,0.34)"
+                  stroke="rgba(30,58,95,0.22)"
                   strokeWidth="2"
                   strokeDasharray="1 7"
                   strokeLinecap="round"
@@ -752,7 +757,7 @@ export function BraceletStudio({
                           data-mm={bead.mm}
                         >
                           <title>{`${stoneLabel(stone.slug, lang)} · ${bead.mm}mm`}</title>
-                          <circle r={px / 2} fill="#0b0906" />
+                          <circle r={px / 2} fill="#f4f6fa" />
                           <image
                             href={stone.imagePath}
                             x={-img / 2}
@@ -780,8 +785,8 @@ export function BraceletStudio({
                 {/* empty state ring */}
                 {beads.length === 0 && (
                   <g className="br-empty-ring">
-                    <circle cx="280" cy="280" r="120" fill="none" stroke="rgba(246,238,226,0.14)" strokeWidth="1" strokeDasharray="3 9" />
-                    <circle cx="280" cy="280" r="120" fill="none" stroke="rgba(246,238,226,0.05)" strokeWidth="26" />
+                    <circle cx="280" cy="280" r="120" fill="none" stroke="rgba(30,58,95,0.12)" strokeWidth="1" strokeDasharray="3 9" />
+                    <circle cx="280" cy="280" r="120" fill="none" stroke="rgba(30,58,95,0.04)" strokeWidth="26" />
                   </g>
                 )}
               </svg>

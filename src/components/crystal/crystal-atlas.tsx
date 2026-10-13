@@ -62,7 +62,7 @@ export function CrystalAtlas() {
   const [studioOpen, setStudioOpen] = useState(false);
   const [codexOpen, setCodexOpen] = useState(false);
   const [studioSeed, setStudioSeed] = useState<StudioSeed | null>(null);
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("zh");
   const [theme, setTheme] = useState<ThemeMode>("dark");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 

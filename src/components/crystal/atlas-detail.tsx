@@ -10,6 +10,7 @@ import {
   Link2,
   Check,
   Gem,
+  Sparkles,
 } from "lucide-react";
 import { STONES, formatMmList, type Stone } from "@/lib/stones-data";
 import { t, stoneZh, CHAKRA_ZH, MONTH_ZH, type Lang } from "@/lib/i18n";
@@ -149,7 +150,7 @@ export function AtlasDetail({
           >
             <ChevronRight className="h-4 w-4" />
           </button>
-          <span className="ml-2 text-[0.62rem] tracking-[0.28em] text-[rgba(239,233,221,0.5)] uppercase">
+          <span className="ml-2 text-[0.62rem] tracking-[0.28em] text-[rgba(30,58,95,0.42)] uppercase">
             {String(index + 1).padStart(2, "0")} / {STONES.length}
           </span>
         </div>
@@ -197,7 +198,7 @@ export function AtlasDetail({
             width={720}
             height={720}
           />
-          <span className="absolute bottom-3 right-3 z-10 rounded-full border border-[rgba(246,238,226,0.25)] bg-black/45 px-2.5 py-1 text-[0.52rem] tracking-[0.22em] text-[rgba(246,238,226,0.75)] uppercase">
+          <span className="absolute bottom-3 right-3 z-10 rounded-full border border-[rgba(30,58,95,0.12)] bg-white/85 backdrop-blur-sm px-2.5 py-1 text-[0.52rem] tracking-[0.22em] text-[rgba(30,58,95,0.65)] uppercase">
             {stone.representativeSku ?? stone.slug}
           </span>
         </div>
@@ -334,21 +335,32 @@ export function AtlasDetail({
           <p className="atlas-pair-hint">{dict.pairHint}</p>
         </section>
 
-        {/* CTA */}
-        <div className="mt-7">
+        {/* CTA — Dual-Tier Custom Made Funnel */}
+        <div className="mt-7 flex flex-col gap-2.5">
+          {/* Primary CTA: Custom Made */}
           <a
-            href={stone.ctaHref}
-            className="atlas-cta"
-            onClick={(e) => {
-              e.preventDefault();
-              onBuild(stone.slug);
-            }}
+            href={`/crystals/custom/?stone=${stone.slug}`}
+            className="atlas-cta atlas-cta--custom group flex items-center justify-between px-5 py-3.5 rounded-xl font-medium tracking-[0.08em] transition-all bg-[#14243b] text-white hover:bg-[#1e3a5f] shadow-[0_4px_16px_rgba(20,36,59,0.14)] hover:scale-[1.01]"
           >
-            <span>{dict.buildCta(label)}</span>
-            <ArrowUpRight className="h-4 w-4" />
+            <span className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#c58b8e]" />
+              <span>{dict.customMadeCta(label)}</span>
+            </span>
+            <ArrowUpRight className="h-4 w-4 text-[#c58b8e] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
-          <p className="mt-2 text-[0.62rem] tracking-[0.16em] text-[rgba(239,233,221,0.45)] uppercase">
-            {dict.ctaHint}
+
+          {/* Secondary CTA: Bracelet Studio Tryout */}
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[rgba(30,58,95,0.12)] bg-[rgba(30,58,95,0.04)] text-[0.74rem] tracking-[0.14em] uppercase text-[#1e3a5f] hover:bg-[rgba(120,154,203,0.15)] hover:border-[rgba(30,58,95,0.2)] transition-all"
+            onClick={() => onBuild(stone.slug)}
+          >
+            <Gem className="h-3.5 w-3.5 text-[#1e3a5f]" />
+            <span>{dict.buildCta(label)}</span>
+          </button>
+
+          <p className="mt-1 text-center text-[0.62rem] leading-relaxed tracking-[0.1em] text-[rgba(30,58,95,0.42)]">
+            {dict.customMadeHint}
           </p>
         </div>
       </div>

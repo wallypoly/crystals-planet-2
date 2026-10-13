@@ -12,6 +12,7 @@ import {
   Moon,
   Keyboard,
   BookOpen,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { STONES } from "@/lib/stones-data";
@@ -258,6 +259,14 @@ export function AtlasDock({
         >
           <Gem className="h-3.5 w-3.5" />
         </button>
+        <a
+          href="/crystals/custom/"
+          className="atlas-dock__tool atlas-dock__tool--custom text-[#c58b8e] hover:text-[#14243b]"
+          aria-label={dict.customMadeDirect}
+          title={dict.customMadeDirect}
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+        </a>
         <button
           type="button"
           className="atlas-dock__tool"
