@@ -3,7 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { STONES, TOTAL_STONES, TOTAL_VARIANTS } from "@/lib/stones-data";
-import { t, STONE_ZH, LANG_KEY, type Lang } from "@/lib/i18n";
+import { t, STONE_ZH, CHAKRA_ZH, LANG_KEY, type Lang } from "@/lib/i18n";
+import {
+  INTENTION_ZH,
+  stonesForIntention,
+  type Intention,
+} from "@/lib/stone-knowledge";
+import { SHOW_DRAFT_KNOWLEDGE } from "@/lib/atlas-flags";
 import { decodeDesign, buildPreset, PRESETS, type Bead } from "@/lib/bracelet";
 import { dailyStone } from "@/lib/daily";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +18,7 @@ import { AtlasDetail } from "./atlas-detail";
 import { AtlasNotes } from "./atlas-notes";
 import { AtlasDock, type ViewMode, type ThemeMode } from "./atlas-dock";
 import { AtlasGrid } from "./atlas-grid";
+import { AtlasIntents, AtlasFilterStatus } from "./atlas-intents";
 import { FavoritesDrawer } from "./favorites-drawer";
 import { BraceletStudio, type StudioSeed } from "./bracelet-studio";
 import { CodexOverlay } from "./codex-overlay";
@@ -21,6 +28,28 @@ import {
   SpaceRail,
   type ChakraKey,
 } from "@/components/frame";
+
+const INTENTION_ORDER: Intention[] = [
+  "calm",
+  "focus",
+  "confidence",
+  "expression",
+  "selfLove",
+  "boundaries",
+];
+
+/** Stones per intention, fixed for the build (knowledge data is static) */
+const INTENTION_SLUGS = new Map<Intention, Set<string>>(
+  INTENTION_ORDER.map((key) => [
+    key,
+    new Set(stonesForIntention(key, { includeDraft: SHOW_DRAFT_KNOWLEDGE })),
+  ]),
+);
+
+/** Intentions with at least one public stone; empty until data is reviewed */
+const AVAILABLE_INTENTIONS = INTENTION_ORDER.filter(
+  (key) => (INTENTION_SLUGS.get(key)?.size ?? 0) > 0,
+);
 
 const FAV_KEY = "atlas-favorites";
 const THEME_KEY = "atlas-theme";
@@ -76,6 +105,7 @@ export function CrystalAtlas() {
   const [query, setQuery] = useState("");
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [chakraFilter, setChakraFilter] = useState<ChakraKey | null>(null);
+  const [intentFilter, setIntentFilter] = useState<Intention | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("orbit");
 
   // Favorites (localStorage cached, reconciled with the server vault)
@@ -345,18 +375,29 @@ export function CrystalAtlas() {
   const selected = selectedIndex >= 0 ? STONES[selectedIndex] : null;
 
   /**
-   * Filtered stones (search + color family + chakra). The chakra rail is a
-   * third facet of the same filter rather than a parallel mechanism, so the
-   * three combine with AND exactly like the dock chips already do.
+   * Filtered stones (search + color family + chakra + intention). The chakra
+   * rail and intention chips are further facets of the same filter rather
+   * than parallel mechanisms, so all of them combine with AND exactly like
+   * the dock chips already do.
    */
   const matchSlugs = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q && colorFilter === null && chakraFilter === null) return null;
+    if (
+      !q &&
+      colorFilter === null &&
+      chakraFilter === null &&
+      intentFilter === null
+    ) {
+      return null;
+    }
+    const intentSlugs =
+      intentFilter === null ? null : INTENTION_SLUGS.get(intentFilter);
     const set = new Set<string>();
     for (const s of STONES) {
       const inColor = colorFilter === null || s.colorFamily === colorFilter;
       if (!inColor) continue;
       if (chakraFilter !== null && s.chakra !== chakraFilter) continue;
+      if (intentSlugs && !intentSlugs.has(s.slug)) continue;
       const zh = STONE_ZH[s.slug];
       const haystack = [
         s.displayName,
@@ -376,7 +417,7 @@ export function CrystalAtlas() {
       set.add(s.slug);
     }
     return set;
-  }, [query, colorFilter, chakraFilter]);
+  }, [query, colorFilter, chakraFilter, intentFilter]);
 
   const filteredStones = useMemo(
     () =>
@@ -440,6 +481,31 @@ export function CrystalAtlas() {
     setQuery("");
     setColorFilter(null);
   }, []);
+
+  /** Reset every facet at once (status line "clear") */
+  const clearAllFilters = useCallback(() => {
+    setQuery("");
+    setColorFilter(null);
+    setChakraFilter(null);
+    setIntentFilter(null);
+  }, []);
+
+  /** Human-readable names of the active facets, in reading order */
+  const filterParts = useMemo(() => {
+    const zh = lang === "zh";
+    const parts: string[] = [];
+    if (intentFilter) parts.push(INTENTION_ZH[intentFilter]);
+    if (chakraFilter) parts.push(zh ? (CHAKRA_ZH[chakraFilter] ?? chakraFilter) : chakraFilter);
+    if (colorFilter) {
+      const sample = STONES.find((s) => s.colorFamily === colorFilter);
+      parts.push(
+        zh && sample ? (STONE_ZH[sample.slug]?.family ?? colorFilter) : colorFilter,
+      );
+    }
+    const q = query.trim();
+    if (q) parts.push(`“${q}”`);
+    return parts;
+  }, [lang, intentFilter, chakraFilter, colorFilter, query]);
 
   /** Apply the theme to <html data-theme> so ticker/header/footer follow too */
   useEffect(() => {
@@ -638,6 +704,19 @@ export function CrystalAtlas() {
             <span className="atlas-daily__cta">{t(lang).dailyCta}</span>
           </span>
         </button>
+
+        <AtlasIntents
+          intentions={AVAILABLE_INTENTIONS}
+          active={intentFilter}
+          onChange={setIntentFilter}
+          lang={lang}
+        />
+        <AtlasFilterStatus
+          parts={filterParts}
+          count={filteredStones.length}
+          onClear={clearAllFilters}
+          lang={lang}
+        />
       </section>
 
       {/* Notes toggle — orbit view only; in grid view it would cover cards */}

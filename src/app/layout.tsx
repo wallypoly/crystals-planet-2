@@ -6,6 +6,9 @@ import {
   GFS_Didot,
 } from "next/font/google";
 import "./globals.css";
+import "./r1-intent.css";
+import "./r1-detail.css";
+import "./r1-dock.css";
 import { Toaster } from "@/components/ui/toaster";
 
 const cormorant = Cormorant_Garamond({

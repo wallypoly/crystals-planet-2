@@ -1,0 +1,157 @@
+/* Round-one atlas refinements: detail. Loaded after globals.css. */
+
+/* ---- Detail panel: understand first, then choose ---- */
+.crystal-atlas-detail .atlas-detail-intro {
+  font-size: 0.92rem;
+  line-height: 1.95;
+  font-weight: 400;
+  color: var(--navy-80);
+}
+.crystal-atlas-detail .atlas-note-row {
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+.crystal-atlas-detail .atlas-section-label {
+  color: var(--navy-65);
+}
+.crystal-atlas-detail .atlas-spec-cell dt,
+.crystal-atlas-detail .atlas-detail-sub-en,
+.crystal-atlas-detail .atlas-pair-hint {
+  color: var(--navy-65);
+}
+.crystal-atlas-detail .atlas-pair-hint {
+  font-size: 0.64rem;
+  line-height: 1.6;
+}
+
+/* Intention tags: quiet text, no fill */
+.atlas-intent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.atlas-intent-tag {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--navy-65);
+}
+.atlas-intent-tag::before {
+  content: "·";
+  margin-right: 0.35rem;
+  color: var(--rose);
+}
+
+/* Main chakra */
+.atlas-chakra-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--navy-08);
+  border-bottom: 1px solid var(--navy-08);
+}
+.atlas-chakra-line__label {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  color: var(--navy-65);
+}
+.atlas-chakra-line__value {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  line-height: 1.4;
+  color: var(--navy-deep);
+}
+.atlas-claim-note {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--navy-65);
+}
+.atlas-chakra-line .atlas-claim-note {
+  margin-left: 0;
+  flex-basis: 100%;
+}
+
+/* How to wear */
+.atlas-wear__tone {
+  margin: 0 0 0.2rem;
+  font-size: 0.92rem;
+  color: var(--navy-deep);
+}
+.atlas-wear__tone-label {
+  margin-right: 0.75rem;
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  color: var(--navy-65);
+}
+
+/* Correspondences: label / value */
+.atlas-corr-list {
+  margin: 0;
+}
+.atlas-corr-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--navy-12);
+}
+.atlas-corr-row:last-child {
+  border-bottom: 0;
+}
+.atlas-corr-row dt {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  color: var(--navy-65);
+  line-height: 1.8;
+}
+.atlas-corr-row dd {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--navy-deep);
+}
+.atlas-corr-row .atlas-claim-note {
+  display: block;
+  margin-left: 0;
+}
+
+/* Specs & care disclosure */
+.atlas-more {
+  border-top: 1px solid var(--navy-08);
+  border-bottom: 1px solid var(--navy-08);
+}
+.atlas-more__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.88rem;
+  letter-spacing: 0.12em;
+  color: var(--navy-deep);
+}
+.atlas-more__summary::-webkit-details-marker {
+  display: none;
+}
+.atlas-more__summary::after {
+  content: "+";
+  font-size: 1.1rem;
+  color: var(--navy-65);
+}
+.atlas-more[open] > .atlas-more__summary::after {
+  content: "\2212";
+}
+.atlas-more__summary:focus-visible {
+  outline: 2px solid var(--wash);
+  outline-offset: 2px;
+}
+.atlas-more__body {
+  padding-bottom: 1.25rem;
+}

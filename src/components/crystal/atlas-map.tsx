@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Heart, Sparkles } from "lucide-react";
 import { STONES, type Stone } from "@/lib/stones-data";
-import { t, STONE_ZH, type Lang } from "@/lib/i18n";
+import { t, STONE_ZH, CHAKRA_ZH, type Lang } from "@/lib/i18n";
+import { stoneKnowledge, publicClaims, INTENTION_ZH } from "@/lib/stone-knowledge";
+import { stoneStyle, COLOR_TONE_ZH } from "@/lib/stone-style";
+import { SHOW_DRAFT_KNOWLEDGE } from "@/lib/atlas-flags";
 import {
   buildAtlasLayout,
   buildChakraLinks,
@@ -616,11 +619,28 @@ export function AtlasMap({
         const matched = !matchSlugs || matchSlugs.has(stone.slug);
         const isFav = favorites.includes(stone.slug);
         const isDaily = stone.slug === dailySlug;
-        const sizes = stone.availableMm.join(", ");
         const zh = STONE_ZH[stone.slug];
         const label = lang === "zh" && zh ? zh.name : stone.displayName;
         const familyLabel =
           lang === "zh" && zh ? zh.family : stone.colorFamily;
+        // Caption line 2: "<chakra> · <hint>". The intention hint is used only
+        // when it passes the same public-claims gate as the detail panel.
+        const chakraLabel =
+          lang === "zh" ? (CHAKRA_ZH[stone.chakra] ?? stone.chakra) : stone.chakra;
+        const firstIntention = stoneKnowledge(stone.slug)?.intentions?.[0];
+        const intentionPublic =
+          firstIntention !== undefined &&
+          publicClaims(stone.slug, { includeDraft: SHOW_DRAFT_KNOWLEDGE }).meaning !== undefined;
+        const tone = stoneStyle(stone.slug)?.tone;
+        const hint =
+          lang === "zh"
+            ? intentionPublic && firstIntention
+              ? INTENTION_ZH[firstIntention]
+              : tone
+                ? COLOR_TONE_ZH[tone]
+                : familyLabel
+            : (stone.keywords[0] ?? stone.colorFamily);
+        const caption = `${chakraLabel} · ${hint}`;
         // Depth reads through brightness, scale and blur only — no new colour.
         // A selected or matched back-hemisphere bead is pulled forward so the
         // panel can still be opened from the far side of the sphere.
@@ -667,7 +687,7 @@ export function AtlasMap({
               className="crystal-atlas-node"
               aria-label={dict.openStone(
                 label,
-                `${familyLabel} ${lang === "zh" ? zh?.material ?? "" : stone.materialType}`,
+                caption,
               )}
               aria-expanded={isSelected}
               aria-pressed={isSelected}
@@ -692,9 +712,7 @@ export function AtlasMap({
                 </span>
                 <span className="crystal-atlas-node-copy">
                   <strong>{label}</strong>
-                  <small>
-                    {familyLabel} / {sizes} mm
-                  </small>
+                  <small>{caption}</small>
                 </span>
               </span>
             </button>

@@ -14,6 +14,15 @@ import {
 } from "lucide-react";
 import { STONES, formatMmList, type Stone } from "@/lib/stones-data";
 import { t, stoneZh, CHAKRA_ZH, MONTH_ZH, type Lang } from "@/lib/i18n";
+import {
+  publicClaims,
+  stoneKnowledge,
+  INTENTION_ZH,
+  ELEMENT_ZH,
+  ZODIAC_ZH,
+} from "@/lib/stone-knowledge";
+import { stoneStyle, COLOR_TONE_ZH } from "@/lib/stone-style";
+import { SHOW_DRAFT_KNOWLEDGE } from "@/lib/atlas-flags";
 import { useToast } from "@/hooks/use-toast";
 
 function SpecCell({ label, value }: { label: string; value: string }) {
@@ -111,6 +120,54 @@ export function AtlasDetail({
     lang === "zh"
       ? dict.variantsLabel(stone.variantCount)
       : `${stone.variantCount} builder size and grade records preserved`;
+
+  // Knowledge layer: only claims the owner has cleared (or draft preview).
+  const claims = useMemo(
+    () => publicClaims(stone.slug, { includeDraft: SHOW_DRAFT_KNOWLEDGE }),
+    [stone.slug],
+  );
+  const meaningZh = lang === "zh" ? claims.meaning?.value : undefined;
+  const intentions =
+    meaningZh && claims.meaning
+      ? (stoneKnowledge(stone.slug)?.intentions ?? [])
+      : [];
+  const chakraClaim = claims.chakras;
+  const mainChakra =
+    lang === "zh" && chakraClaim
+      ? chakraClaim.value.map((c) => CHAKRA_ZH[c] ?? c).join("、")
+      : chakraLabel;
+  const chakraNote =
+    lang === "zh" && chakraClaim ? chakraClaim.note : undefined;
+  const style = lang === "zh" ? stoneStyle(stone.slug) : undefined;
+
+  const correspondences: { key: string; label: string; value: string; note?: string }[] =
+    [];
+  if (lang === "zh") {
+    if (claims.element) {
+      correspondences.push({
+        key: "element",
+        label: "元素",
+        value: ELEMENT_ZH[claims.element.value],
+        note: claims.element.note,
+      });
+    }
+    if (claims.zodiac) {
+      correspondences.push({
+        key: "zodiac",
+        label: "星座",
+        value: claims.zodiac.value.map((z) => ZODIAC_ZH[z]).join("、"),
+        note: claims.zodiac.note,
+      });
+    }
+    if (claims.numbers) {
+      correspondences.push({
+        key: "numbers",
+        label: "数字",
+        value: claims.numbers.value.join("、"),
+        note: claims.numbers.note,
+      });
+    }
+  }
 
   const parsedPairings = useMemo(
     () =>
@@ -219,19 +276,138 @@ export function AtlasDetail({
         {lang === "zh" && (
           <p className="atlas-detail-sub-en">{stone.displayName}</p>
         )}
-        <p className="atlas-detail-intro mt-3">{intro}</p>
+        <p className="atlas-detail-intro mt-3">{meaningZh ?? intro}</p>
 
-        {/* Keywords */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {keywords.map((k) => (
-            <span key={k} className="atlas-keyword-chip">
-              {k}
-            </span>
-          ))}
+        {/* Keywords — look words; replaced by intentions when those exist so
+            the panel never stacks two chip rows */}
+        {intentions.length === 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {keywords.map((k) => (
+              <span key={k} className="atlas-keyword-chip">
+                {k}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Intention chips (zh, only with a public meaning claim) */}
+        {intentions.length > 0 && (
+          <ul
+            className="atlas-intent-list mt-3"
+            aria-label="日常意图"
+          >
+            {intentions.map((i) => (
+              <li key={i} className="atlas-intent-tag">
+                {INTENTION_ZH[i]}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Main chakra */}
+        <div className="atlas-chakra-line mt-5">
+          <span className="atlas-chakra-line__label">{dict.chakra}</span>
+          <span className="atlas-chakra-line__value">{mainChakra}</span>
+          {chakraNote && (
+            <span className="atlas-claim-note">{chakraNote}</span>
+          )}
         </div>
 
+        {/* How to wear (zh only) */}
+        {style && (
+          <section aria-label="穿戴建议" className="atlas-wear mt-6">
+            <h3 className="atlas-section-label">穿戴建议</h3>
+            <p className="atlas-wear__tone">
+              <span className="atlas-wear__tone-label">色调</span>
+              {COLOR_TONE_ZH[style.tone]}
+            </p>
+            <p className="atlas-note-row">{style.wearZh}</p>
+            <p className="atlas-note-row">{style.styleZh}</p>
+          </section>
+        )}
+
+        {/* Pairing ideas — partner names jump to their atlas node */}
+        <section
+          aria-label={`${stone.displayName} pairing ideas`}
+          className="mt-6"
+        >
+          <h3 className="atlas-section-label">{dict.pairingIdeas}</h3>
+          <div className="atlas-pair-list">
+            {parsedPairings.map(({ note, partner }) =>
+              partner ? (
+                <p key={note} className="atlas-note-row atlas-note-row--pair">
+                  <button
+                    type="button"
+                    className="atlas-pair-link"
+                    onClick={() => onSelectStone(partner.slug)}
+                    aria-label={
+                      lang === "zh"
+                        ? `跳转到 ${partner.name}`
+                        : `Jump to ${partner.name}`
+                    }
+                  >
+                    <span
+                      className="atlas-pair-link__dot"
+                      style={{
+                        background: STONES.find((s) => s.slug === partner.slug)
+                          ?.palette[1],
+                      }}
+                      aria-hidden="true"
+                    />
+                    {partner.name}
+                  </button>
+                  {partner.rest}
+                  <button
+                    type="button"
+                    className="atlas-pair-build"
+                    aria-label={dict.pairBuildAria(partner.name)}
+                    title={dict.pairBuildAria(partner.name)}
+                    onClick={() => onPairBuild(partner.slug)}
+                  >
+                    <Gem className="h-3 w-3" aria-hidden="true" />
+                    <span aria-hidden="true">2</span>
+                  </button>
+                </p>
+              ) : (
+                <p key={note} className="atlas-note-row">
+                  {note}
+                </p>
+              ),
+            )}
+          </div>
+          <p className="atlas-pair-hint">{dict.pairHint}</p>
+        </section>
+
+        {/* Correspondences */}
+        {correspondences.length > 0 && (
+          <section aria-label="对应关系" className="mt-7">
+            <h3 className="atlas-section-label">对应关系</h3>
+            <dl className="atlas-corr-list">
+              {correspondences.map((c) => (
+                <div key={c.key} className="atlas-corr-row">
+                  <dt>{c.label}</dt>
+                  <dd>
+                    {c.value}
+                    {c.note && (
+                      <span className="atlas-claim-note">{c.note}</span>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        {/* Specs & care — collapsed by default */}
+        <details className="atlas-more mt-7">
+          <summary className="atlas-more__summary">
+            {lang === "zh" ? "规格与养护" : "Specs & care"}
+          </summary>
+          <div className="atlas-more__body">
+            {meaningZh && <p className="atlas-detail-intro">{intro}</p>}
+
         {/* Specs */}
-        <dl className="atlas-spec-grid mt-6">
+        <dl className="atlas-spec-grid mt-4">
           <SpecCell label={dict.buildSizes} value={`${formatMmList(stone.availableMm)} mm`} />
           <SpecCell
             label={dict.sourceSizes}
@@ -293,57 +469,8 @@ export function AtlasDetail({
           </div>
         </section>
 
-        {/* Pairing ideas — partner names jump to their atlas node */}
-        <section
-          aria-label={`${stone.displayName} pairing ideas`}
-          className="mt-6"
-        >
-          <h3 className="atlas-section-label">{dict.pairingIdeas}</h3>
-          <div className="atlas-pair-list">
-            {parsedPairings.map(({ note, partner }) =>
-              partner ? (
-                <p key={note} className="atlas-note-row atlas-note-row--pair">
-                  <button
-                    type="button"
-                    className="atlas-pair-link"
-                    onClick={() => onSelectStone(partner.slug)}
-                    aria-label={
-                      lang === "zh"
-                        ? `跳转到 ${partner.name}`
-                        : `Jump to ${partner.name}`
-                    }
-                  >
-                    <span
-                      className="atlas-pair-link__dot"
-                      style={{
-                        background: STONES.find((s) => s.slug === partner.slug)
-                          ?.palette[1],
-                      }}
-                      aria-hidden="true"
-                    />
-                    {partner.name}
-                  </button>
-                  {partner.rest}
-                  <button
-                    type="button"
-                    className="atlas-pair-build"
-                    aria-label={dict.pairBuildAria(partner.name)}
-                    title={dict.pairBuildAria(partner.name)}
-                    onClick={() => onPairBuild(partner.slug)}
-                  >
-                    <Gem className="h-3 w-3" aria-hidden="true" />
-                    <span aria-hidden="true">2</span>
-                  </button>
-                </p>
-              ) : (
-                <p key={note} className="atlas-note-row">
-                  {note}
-                </p>
-              ),
-            )}
           </div>
-          <p className="atlas-pair-hint">{dict.pairHint}</p>
-        </section>
+        </details>
 
         {/* CTA — Dual-Tier Custom Made Funnel */}
         <div className="mt-7 flex flex-col gap-2.5">

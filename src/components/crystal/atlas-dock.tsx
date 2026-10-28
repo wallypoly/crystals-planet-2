@@ -13,8 +13,9 @@ import {
   Keyboard,
   BookOpen,
   Sparkles,
+  Ellipsis,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { STONES } from "@/lib/stones-data";
 import { t, STONE_ZH, type Lang } from "@/lib/i18n";
 
@@ -85,30 +86,39 @@ export function AtlasDock({
   searchRef?: React.RefObject<HTMLInputElement | null>;
 }) {
   const dict = t(lang);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const helpRef = useRef<HTMLDivElement | null>(null);
+  const moreRef = useRef<HTMLDivElement | null>(null);
+  const moreBtnRef = useRef<HTMLButtonElement | null>(null);
+  const panelId = useId();
+  const zh = lang === "zh";
 
-  /* Escape closes the shortcuts popover */
+  /* Escape closes the More panel and returns focus to its button */
   useEffect(() => {
-    if (!helpOpen) return;
+    if (!moreOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setHelpOpen(false);
+      if (e.key === "Escape") {
+        setMoreOpen(false);
+        setHelpOpen(false);
+        moreBtnRef.current?.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [helpOpen]);
+  }, [moreOpen]);
 
-  /* Click outside closes the shortcuts popover */
+  /* Click outside closes the More panel */
   useEffect(() => {
-    if (!helpOpen) return;
+    if (!moreOpen) return;
     const onDown = (e: PointerEvent) => {
-      if (helpRef.current && !helpRef.current.contains(e.target as Node)) {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
         setHelpOpen(false);
       }
     };
     window.addEventListener("pointerdown", onDown);
     return () => window.removeEventListener("pointerdown", onDown);
-  }, [helpOpen]);
+  }, [moreOpen]);
 
   const families = useMemo(() => {
     const map = new Map<string, string>();
@@ -185,91 +195,27 @@ export function AtlasDock({
         )}
         <button
           type="button"
-          className="atlas-dock__tool atlas-dock__tool--lang"
-          onClick={() => onLang(lang === "en" ? "zh" : "en")}
-          aria-label={dict.langToggle}
-          title={dict.langToggle}
-        >
-          <Languages className="h-3.5 w-3.5" />
-          <span className="atlas-dock__lang-label">{lang === "en" ? "中" : "EN"}</span>
-        </button>
-        <button
-          type="button"
-          className="atlas-dock__tool"
-          onClick={() => onTheme(theme === "dark" ? "light" : "dark")}
-          aria-label={theme === "dark" ? dict.themeToLight : dict.themeToDark}
-          title={theme === "dark" ? dict.themeToLight : dict.themeToDark}
-        >
-          {theme === "dark" ? (
-            <Sun className="h-3.5 w-3.5" />
-          ) : (
-            <Moon className="h-3.5 w-3.5" />
-          )}
-        </button>
-        <div className="atlas-dock__help-wrap" ref={helpRef}>
-          <button
-            type="button"
-            className={`atlas-dock__tool ${helpOpen ? "is-active" : ""}`}
-            onClick={() => setHelpOpen((v) => !v)}
-            aria-label={dict.shortcutsHelp}
-            title={dict.shortcutsHelp}
-            aria-expanded={helpOpen}
-          >
-            <Keyboard className="h-3.5 w-3.5" />
-          </button>
-          {helpOpen && (
-            <div className="atlas-shortcuts" role="dialog" aria-label={dict.shortcutsTitle}>
-              <p className="atlas-shortcuts__title">{dict.shortcutsTitle}</p>
-              <ul className="atlas-shortcuts__list">
-                <li>
-                  <span>←  →</span>
-                  <em>{dict.shortcutsRotate}</em>
-                </li>
-                <li>
-                  <span>↑  ↓</span>
-                  <em>{dict.shortcutsNav}</em>
-                </li>
-                <li>
-                  <span>Esc</span>
-                  <em>{dict.shortcutsClose}</em>
-                </li>
-                <li>
-                  <span>/</span>
-                  <em>{dict.shortcutsSearch}</em>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
-        <button
-          type="button"
-          className="atlas-dock__tool"
+          className="atlas-dock__tool atlas-dock__tool--labeled"
           onClick={onOpenCodex}
           aria-label={dict.codexOpen}
           title={dict.codexOpen}
         >
           <BookOpen className="h-3.5 w-3.5" />
+          <span className="atlas-dock__label">{zh ? "图鉴" : "Codex"}</span>
         </button>
         <button
           type="button"
-          className="atlas-dock__tool atlas-dock__tool--studio"
+          className="atlas-dock__tool atlas-dock__tool--labeled atlas-dock__tool--studio"
           onClick={onOpenStudio}
           aria-label={dict.braceletStudio}
           title={dict.braceletStudio}
         >
           <Gem className="h-3.5 w-3.5" />
+          <span className="atlas-dock__label">{zh ? "定制" : "Custom"}</span>
         </button>
-        <a
-          href="/crystals/custom/"
-          className="atlas-dock__tool atlas-dock__tool--custom text-[var(--rose)] hover:text-[#14243b]"
-          aria-label={dict.customMadeDirect}
-          title={dict.customMadeDirect}
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-        </a>
         <button
           type="button"
-          className="atlas-dock__tool"
+          className="atlas-dock__tool atlas-dock__tool--labeled"
           onClick={onOpenFavorites}
           aria-label={dict.openFavorites(favCount)}
         >
@@ -278,6 +224,7 @@ export function AtlasDock({
             strokeWidth={2}
             fill={favCount > 0 ? "currentColor" : "none"}
           />
+          <span className="atlas-dock__label">{zh ? "收藏" : "Saved"}</span>
           <span className="atlas-dock__badge">{favCount}</span>
         </button>
         <div className="atlas-dock__views" role="group" aria-label="View mode">
@@ -301,6 +248,105 @@ export function AtlasDock({
           >
             <LayoutGrid className="h-3.5 w-3.5" />
           </button>
+        </div>
+        <div
+          className="atlas-more"
+          ref={moreRef}
+          onBlur={(e) => {
+            if (
+              moreOpen &&
+              e.relatedTarget &&
+              !e.currentTarget.contains(e.relatedTarget as Node)
+            ) {
+              setMoreOpen(false);
+              setHelpOpen(false);
+            }
+          }}
+        >
+          <button
+            ref={moreBtnRef}
+            type="button"
+            className={`atlas-dock__tool atlas-dock__tool--labeled ${moreOpen ? "is-active" : ""}`}
+            onClick={() => {
+              setMoreOpen((v) => !v);
+              setHelpOpen(false);
+            }}
+            aria-expanded={moreOpen}
+            aria-controls={panelId}
+            aria-haspopup="true"
+            aria-label={zh ? "更多" : "More"}
+            title={zh ? "更多" : "More"}
+          >
+            <Ellipsis className="h-3.5 w-3.5" />
+            <span className="atlas-dock__label">{zh ? "更多" : "More"}</span>
+          </button>
+          {moreOpen && (
+            <div id={panelId} className="atlas-more__panel" role="group" aria-label={zh ? "更多" : "More"}>
+              <button
+                type="button"
+                className="atlas-more__item"
+                onClick={() => onLang(lang === "en" ? "zh" : "en")}
+                aria-label={dict.langToggle}
+              >
+                <Languages className="h-3.5 w-3.5" />
+                <span>{lang === "en" ? "中文" : "English"}</span>
+              </button>
+              <button
+                type="button"
+                className="atlas-more__item"
+                onClick={() => onTheme(theme === "dark" ? "light" : "dark")}
+                aria-label={theme === "dark" ? dict.themeToLight : dict.themeToDark}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-3.5 w-3.5" />
+                ) : (
+                  <Moon className="h-3.5 w-3.5" />
+                )}
+                <span>{theme === "dark" ? dict.themeToLight : dict.themeToDark}</span>
+              </button>
+              <a
+                href="/crystals/custom/"
+                className="atlas-more__item atlas-more__item--custom"
+                aria-label={dict.customMadeDirect}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>{dict.customMadeDirect}</span>
+              </a>
+              <button
+                type="button"
+                className="atlas-more__item atlas-more__item--keys"
+                onClick={() => setHelpOpen((v) => !v)}
+                aria-expanded={helpOpen}
+                aria-label={dict.shortcutsHelp}
+              >
+                <Keyboard className="h-3.5 w-3.5" />
+                <span>{dict.shortcutsHelp}</span>
+              </button>
+              {helpOpen && (
+                <div className="atlas-more__shortcuts">
+                  <p className="atlas-shortcuts__title">{dict.shortcutsTitle}</p>
+                  <ul className="atlas-shortcuts__list">
+                    <li>
+                      <span>←  →</span>
+                      <em>{dict.shortcutsRotate}</em>
+                    </li>
+                    <li>
+                      <span>↑  ↓</span>
+                      <em>{dict.shortcutsNav}</em>
+                    </li>
+                    <li>
+                      <span>Esc</span>
+                      <em>{dict.shortcutsClose}</em>
+                    </li>
+                    <li>
+                      <span>/</span>
+                      <em>{dict.shortcutsSearch}</em>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
