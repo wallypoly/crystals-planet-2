@@ -1,0 +1,163 @@
+/* ============================================================
+   Inner pages: /crystals/custom, /crystals/articles,
+   /crystals/shop, /contact
+
+   globals.css is owned by another agent, so every rule the
+   inner pages need lives here and is loaded per page. Only
+   existing site tokens are used — no new colours, no new
+   spacing scale.
+   ============================================================ */
+
+/* ---------------- shared inner-page shell ---------------- */
+
+.inner-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 7vh, 5rem) 1.5rem;
+  text-align: center;
+}
+
+.inner-page__frame {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.inner-page__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.7rem, 4.2vw, 2.35rem);
+  font-weight: 400;
+  color: var(--navy-deep);
+  line-height: 1.3;
+}
+
+.inner-page__rule {
+  width: 44px;
+  height: 1px;
+  margin: 0.15rem 0 0.1rem;
+  border: 0;
+  background: var(--navy-08);
+}
+
+.inner-page__body {
+  font-size: 0.92rem;
+  line-height: 2;
+  color: var(--navy-65);
+}
+
+.inner-page__note {
+  font-size: 0.78rem;
+  line-height: 1.95;
+  color: var(--navy-42);
+}
+
+.inner-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem 1.6rem;
+  margin-top: 0.4rem;
+}
+
+.inner-link {
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--navy);
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--navy-08);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.inner-link:hover {
+  color: var(--navy-deep);
+  border-color: var(--navy-42);
+}
+
+.inner-link--quiet {
+  color: var(--navy-42);
+}
+
+/* ---------------- custom studio as a full page ---------------- */
+
+.studio-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.studio-page__intro {
+  width: min(620px, 100%);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vh, 3.6rem) 1.5rem 1.4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.studio-page__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4.4vw, 2.5rem);
+  font-weight: 400;
+  color: var(--navy-deep);
+  line-height: 1.25;
+}
+
+.studio-page__lede {
+  font-size: 0.9rem;
+  line-height: 2;
+  color: var(--navy-65);
+}
+
+.studio-page__seeded {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--rose);
+  font-weight: 600;
+}
+
+.studio-page__stage {
+  width: 100%;
+  padding: 0 clamp(0.75rem, 3vw, 2rem) clamp(2rem, 5vh, 3.5rem);
+}
+
+/* BraceletStudio ships as a fixed, scrimmed, blurred overlay. As a routed
+   page it has to flow in normal document order instead, so the site
+   header and footer stay reachable and nothing dims the page. Only the
+   overlay shell is neutralised here — every rule inside .br-studio is
+   left exactly as the overlay defines it. */
+.studio-page .br-studio-overlay {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  display: block;
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
+  animation: none;
+}
+
+.studio-page .br-studio {
+  width: 100%;
+  max-width: 1180px;
+  max-height: none;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .studio-page .br-studio {
+    height: auto;
+    border-radius: 1.2rem;
+  }
+}

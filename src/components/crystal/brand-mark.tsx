@@ -50,13 +50,13 @@ export function BrandLockup() {
   return (
     <span className="flex flex-col items-center leading-none select-none">
       <span
-        className="atlas-brand-name text-[1.5rem] italic tracking-wide"
-        style={{ fontFamily: "var(--font-gfs-didot), serif" }}
+        className="atlas-brand-name text-[1.4rem] tracking-[0.22em] uppercase font-semibold"
+        style={{ fontFamily: "var(--font-cinzel), serif" }}
       >
-        MoonArq
+        UNIQorn
       </span>
-      <span className="atlas-brand-sub mt-[5px] text-[0.46rem] tracking-[0.52em] uppercase indent-[0.52em]">
-        Studio
+      <span className="atlas-brand-sub mt-[4px] text-[0.44rem] tracking-[0.42em] uppercase text-[#1e3a5f]">
+        SOUL WELLNESS
       </span>
     </span>
   );

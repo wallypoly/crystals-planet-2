@@ -1,5 +1,5 @@
-// Crystal data for the MoonArq-style Interactive Crystal Atlas.
-// Source reference: moonarqstudio.com /crystals — 17 stones, 82 builder variants.
+// Crystal data for the UNIQorn Interactive Crystal Atlas.
+// Content basis: 17 stones, 82 builder variants.
 
 export type AtlasRing = "inner" | "middle" | "outer";
 
@@ -151,7 +151,7 @@ export const STONES: Stone[] = [
     sourceSizesMm: [6, 8, 10, 12, 14],
     grades: ["R1"],
     variantCount: 5,
-    intro: "Citrine Crystal introduces a honeyed, luminous note that warms the atlas without losing MoonArq's restrained mineral character.",
+    intro: "Citrine Crystal introduces a honeyed, luminous note that warms the atlas without losing the atlas's restrained mineral character.",
     keywords: ["honey light", "golden lift", "warm mineral"],
     properties: ["Symbolic brightness", "Golden warmth", "Sunlit accent"],
     pairingNotes: ["Golden Tiger's Eye for warmth", "Clear Quartz for shine", "Sunstone for a warmer pulse"],
@@ -179,7 +179,7 @@ export const STONES: Stone[] = [
     intro: "Clear Quartz acts like an optical pause: transparent, bright, and useful for spacing stronger colors with clean light.",
     keywords: ["clean light", "transparent pause", "optical clarity"],
     properties: ["Symbolic clarity", "Neutral brightness", "Palette connector"],
-    pairingNotes: ["Nearly every MoonArq palette", "Amethyst for contrast", "Aquamarine for an icy line"],
+    pairingNotes: ["Nearly every palette", "Amethyst for contrast", "Aquamarine for an icy line"],
     ctaHref: "/build",
     ctaLabel: "Build with Clear Quartz",
     hardness: "7",

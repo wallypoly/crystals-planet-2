@@ -1,5 +1,5 @@
-// Bilingual dictionary (EN / 简体中文) for the Interactive Crystal Atlas.
-// Stone-level Chinese content is original editorial translation.
+// Bilingual dictionary (EN / 简体中文) for the UNIQorn Interactive Crystal Atlas.
+// Stone-level Chinese content is original editorial translation for UNIQorn Soul Wellness.
 
 export type Lang = "en" | "zh";
 
@@ -88,7 +88,7 @@ export const STONE_ZH: Record<string, StoneZh> = {
       "白水晶像一次光的停顿：透明、明亮，擅长以干净的光线为浓烈色彩之间留出呼吸。",
     keywords: ["干净光线", "透明的停顿", "光学澄澈"],
     properties: ["象征清明", "中性亮色", "调色盘连接者"],
-    pairing: ["几乎百搭 MoonArq 全部色盘", "紫水晶形成对比", "海蓝宝勾出冰感线条"],
+    pairing: ["几乎百搭全部色盘", "紫水晶形成对比", "海蓝宝勾出冰感线条"],
   },
   "golden-shine-obsidian": {
     name: "金耀石",
@@ -260,6 +260,13 @@ export interface UIStrings {
   pairingIdeas: string;
   buildCta: (name: string) => string;
   ctaHint: string;
+  customMadeCta: (name: string) => string;
+  customMadeHint: string;
+  customMadePairCta: (partner: string) => string;
+  customMadeDirect: string;
+  customMadeTitle: string;
+  backToSite: string;
+  articlesLink: string;
   sizeScale: string;
   notesTitle: string;
   notesBody1: string;
@@ -442,7 +449,7 @@ export interface UIStrings {
 
 const en: UIStrings = {
   kicker: "Interactive Crystal Atlas",
-  title: "Crystal Library",
+  title: "UNIQorn Crystal Atlas",
   stones: "Stones",
   variants: "Variants",
   searchPlaceholder: "Search stones…",
@@ -476,10 +483,17 @@ const en: UIStrings = {
   pairingIdeas: "Pairing Ideas",
   buildCta: (name) => `Build with ${name}`,
   ctaHint: "Opens the Bracelet Studio",
+  customMadeCta: (name) => `✨ Custom Made with ${name}`,
+  customMadeHint: "Enter UNIQorn Custom Workshop with this stone for your tailored wrist size",
+  customMadePairCta: (partner) => `💎 Custom Made with ${partner}`,
+  customMadeDirect: "Custom Made Workshop",
+  customMadeTitle: "Custom Made Bracelet",
+  backToSite: "Back to UNIQorn",
+  articlesLink: "Articles & Journal",
   sizeScale: "Bead Size Scale",
   notesTitle: "Reference layer",
   notesBody1:
-    "MoonArq describes crystals and stones through appearance, pairing ideas, and personal association. Symbolic notes are styling references, not medical guidance, protection claims, or guaranteed outcomes.",
+    "UNIQorn approaches crystals and minerals with Quiet Luxury and mindful resonance. Symbolic styling notes are natural references, not medical advice or guaranteed outcomes.",
   notesBody2:
     "The atlas uses one canonical node per builder stone while preserving every source SKU, grade, millimeter size, and image path behind the selected detail panel.",
   howToRead: "How to read the atlas",
@@ -654,8 +668,8 @@ const en: UIStrings = {
 };
 
 const zh: UIStrings = {
-  kicker: "交互式水晶星图",
-  title: "水晶图书馆",
+  kicker: "交互式水晶星图 · 科普图鉴",
+  title: "UNIQorn 水晶矿石图鉴",
   stones: "石",
   variants: "款",
   searchPlaceholder: "搜索水晶…",
@@ -686,12 +700,19 @@ const zh: UIStrings = {
   none: "—",
   symbolicStyling: "能量寓意",
   pairingIdeas: "搭配灵感",
-  buildCta: (name) => `用 ${name} 做手链`,
-  ctaHint: "打开手链工作台",
+  buildCta: (name) => `用 ${name} 试戴排列`,
+  ctaHint: "在交互工坊中排布预览",
+  customMadeCta: (name) => `✨ 挑选此石 · 开启个人高定`,
+  customMadeHint: "带入当前晶石，前往 UNIQorn 手串定制工坊量身定制专属手围",
+  customMadePairCta: (partner) => `💎 定制双晶手串（搭档 ${partner}）`,
+  customMadeDirect: "个人手串定制工坊",
+  customMadeTitle: "私人高定手串",
+  backToSite: "返回 UNIQorn 官网",
+  articlesLink: "水晶文章专栏",
   sizeScale: "珠径比例尺",
   notesTitle: "参考层",
   notesBody1:
-    "MoonArq 通过外观、搭配灵感与个人联想来描述水晶与石材。能量寓意仅为风格参考，不构成医疗建议、护身承诺或效果保证。",
+    "UNIQorn 秉承自然静谧美学，以天然矿石晶系与个人心境感应来呈现水晶图鉴。每一颗原矿都是独一无二的大地记录，能量寓意作为灵性佩戴与风格搭配之参考。",
   notesBody2:
     "星图每种制作用水晶只保留一个规范节点，同时完整保存其全部来源 SKU、等级、毫米尺寸与图片路径。",
   howToRead: "如何阅读星图",

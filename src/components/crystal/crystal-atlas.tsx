@@ -15,6 +15,12 @@ import { AtlasGrid } from "./atlas-grid";
 import { FavoritesDrawer } from "./favorites-drawer";
 import { BraceletStudio, type StudioSeed } from "./bracelet-studio";
 import { CodexOverlay } from "./codex-overlay";
+import {
+  AtlasCursor,
+  ChakraLegend,
+  SpaceRail,
+  type ChakraKey,
+} from "@/components/frame";
 
 const FAV_KEY = "atlas-favorites";
 const THEME_KEY = "atlas-theme";
@@ -62,13 +68,14 @@ export function CrystalAtlas() {
   const [studioOpen, setStudioOpen] = useState(false);
   const [codexOpen, setCodexOpen] = useState(false);
   const [studioSeed, setStudioSeed] = useState<StudioSeed | null>(null);
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("zh");
   const [theme, setTheme] = useState<ThemeMode>("dark");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // Filter / view state
   const [query, setQuery] = useState("");
   const [colorFilter, setColorFilter] = useState<string | null>(null);
+  const [chakraFilter, setChakraFilter] = useState<ChakraKey | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("orbit");
 
   // Favorites (localStorage cached, reconciled with the server vault)
@@ -337,14 +344,19 @@ export function CrystalAtlas() {
   );
   const selected = selectedIndex >= 0 ? STONES[selectedIndex] : null;
 
-  /** Filtered stones (search + color family). Search matches EN + 中文 names. */
+  /**
+   * Filtered stones (search + color family + chakra). The chakra rail is a
+   * third facet of the same filter rather than a parallel mechanism, so the
+   * three combine with AND exactly like the dock chips already do.
+   */
   const matchSlugs = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q && colorFilter === null) return null;
+    if (!q && colorFilter === null && chakraFilter === null) return null;
     const set = new Set<string>();
     for (const s of STONES) {
       const inColor = colorFilter === null || s.colorFamily === colorFilter;
       if (!inColor) continue;
+      if (chakraFilter !== null && s.chakra !== chakraFilter) continue;
       const zh = STONE_ZH[s.slug];
       const haystack = [
         s.displayName,
@@ -364,7 +376,7 @@ export function CrystalAtlas() {
       set.add(s.slug);
     }
     return set;
-  }, [query, colorFilter]);
+  }, [query, colorFilter, chakraFilter]);
 
   const filteredStones = useMemo(
     () =>
@@ -537,7 +549,7 @@ export function CrystalAtlas() {
 
   return (
     <main
-      className="crystal-universe"
+      className={`crystal-universe ${selected ? "has-detail-open" : ""}`}
       aria-labelledby="crystal-atlas-title"
     >
       <p id="crystal-atlas-instructions" className="crystal-atlas-sr-only">
@@ -547,6 +559,16 @@ export function CrystalAtlas() {
       </p>
       <span className="crystal-universe__vignette" aria-hidden="true" />
       <span className="crystal-universe__starfield" aria-hidden="true" />
+
+      {/* Two-sided frame: left rail filters by chakra, right rail exits to
+          the other spaces. Both hide below 1024px, where the header cluster
+          and the menu drawer keep every entry reachable. */}
+      <ChakraLegend
+        activeChakra={chakraFilter}
+        onChakraChange={setChakraFilter}
+      />
+      <SpaceRail />
+
       <span
         className="crystal-universe__orbitplane"
         aria-hidden="true"
@@ -598,7 +620,7 @@ export function CrystalAtlas() {
         >
           <span
             className="atlas-daily__img"
-            style={{ boxShadow: `0 0 18px ${daily.palette[1]}55` }}
+            style={{ boxShadow: "0 0 0 2px var(--rose-light)" }}
             aria-hidden="true"
           >
             <img src={daily.imagePath} alt="" width={88} height={88} draggable={false} />
@@ -740,6 +762,11 @@ export function CrystalAtlas() {
           onPairStudio={(a, b) => openPairStudio(a, b)}
         />
       )}
+
+      {/* Custom cursor sits last so it paints above the overlays. It renders
+          nothing at all on touch devices — see the (pointer: fine) guard in
+          app/frame.css. */}
+      <AtlasCursor />
     </main>
   );
 }

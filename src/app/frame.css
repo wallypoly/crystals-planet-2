@@ -1,0 +1,560 @@
+/* ============================================================
+   PAGE FRAME — header zones, side rails, custom cursor
+
+   globals.css is owned by another agent, so everything this
+   layer needs lives here. Only existing site tokens are used
+   (--paper / --navy-* / --rose / --wash / --fs-* / --ease-*);
+   no new colours, no new spacing scale, no font changes.
+
+   The cursor block at the bottom is deliberately UNLAYERED so
+   it can win over both @layer components and Tailwind
+   utilities. Everything else stays in @layer components.
+   ============================================================ */
+
+@layer components {
+  /* ---------------- header: left zone (brand + where you are) --- */
+
+  /* Hairline between the lockup and the "you are here" marker.
+     Proximity, not a box: the marker reads as part of the left
+     zone without adding another panel. */
+  .frame-here {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding-left: 0.9rem;
+    margin-left: 0.15rem;
+    border-left: 1px solid var(--navy-12);
+  }
+
+  .frame-here-dot {
+    width: 5px;
+    height: 5px;
+    flex: none;
+    border-radius: 999px;
+    background: var(--rose);
+    box-shadow: 0 0 0 3px var(--rose-light);
+  }
+
+  .frame-here-name {
+    font-family: var(--font-serif);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    color: var(--navy-deep);
+    white-space: nowrap;
+  }
+
+  .frame-here-tag {
+    font-size: 0.5rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--navy-42);
+    white-space: nowrap;
+  }
+
+  /* ---------------- header: right zone (grouped space entries) --- */
+
+  .frame-header-spaces {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .frame-header-group {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  /* Gestalt grouping by separation alone — no extra borders on
+     the chips themselves, so the outlined pills stay quiet. */
+  .frame-header-sep {
+    width: 1px;
+    height: 20px;
+    margin: 0 0.6rem;
+    background: var(--navy-12);
+    flex: none;
+  }
+
+  /* Space chip keeps the atlas-chip look; only the icon hue is set
+     so 手串定制 stays the one rose-marked primary. */
+  .frame-space-chip {
+    white-space: nowrap;
+  }
+
+  .frame-space-trigger {
+    display: none;
+  }
+
+  /* ---------------- side rails ---------------------------------- */
+
+  /* Both rails share one baseline just above the atlas dock, so they
+     read as a single frame rather than two floating strips. Bottom
+     anchoring (not 50% centring) is what keeps the left legend clear
+     of the hero copy and the 今日水晶 card, which own the upper-left. */
+  .frame-rail {
+    position: fixed;
+    bottom: 6.25rem;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .frame-rail--left {
+    left: clamp(0.7rem, 1.3vw, 1.35rem);
+  }
+
+  .frame-rail--right {
+    right: clamp(0.7rem, 1.3vw, 1.35rem);
+    align-items: flex-end;
+  }
+
+  .frame-rail__kicker {
+    font-size: 0.5rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--navy-42);
+    margin-bottom: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .frame-rail--right .frame-rail__kicker {
+    text-align: right;
+  }
+
+  .frame-rail__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* --- left rail: chakra legend --- */
+
+  .frame-legend {
+    position: relative;
+  }
+
+  /* The spine: a single hairline through all seven dots. It makes
+     the stack read as one axis instead of seven loose buttons. */
+  .frame-legend::before {
+    content: "";
+    position: absolute;
+    left: 4.5px;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 1px;
+    background: var(--navy-12);
+  }
+
+  .frame-legend__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.34rem 0.5rem 0.34rem 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    transition:
+      background 0.25s var(--ease-smooth),
+      opacity 0.25s var(--ease-smooth);
+  }
+
+  .frame-legend__dot {
+    position: relative;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 999px;
+    background: var(--dot, var(--navy-20));
+    box-shadow: 0 0 0 3px var(--paper);
+    transition:
+      transform 0.3s var(--ease-expo),
+      box-shadow 0.3s var(--ease-expo);
+  }
+
+  .frame-legend__name {
+    font-family: var(--font-serif);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    color: var(--navy-65);
+    white-space: nowrap;
+    transition: color 0.25s var(--ease-smooth);
+  }
+
+  .frame-legend__count {
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    color: var(--navy-42);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .frame-legend__item:hover {
+    background: var(--navy-04);
+  }
+
+  .frame-legend__item:hover .frame-legend__dot {
+    transform: scale(1.18);
+  }
+
+  .frame-legend__item:hover .frame-legend__name {
+    color: var(--navy-deep);
+  }
+
+  .frame-legend__item.is-active {
+    background: var(--navy-04);
+  }
+
+  .frame-legend__item.is-active .frame-legend__dot {
+    transform: scale(1.3);
+    box-shadow:
+      0 0 0 3px var(--paper),
+      0 0 0 4px var(--dot, var(--navy-20));
+  }
+
+  .frame-legend__item.is-active .frame-legend__name {
+    color: var(--navy-deep);
+    font-weight: 600;
+  }
+
+  .frame-legend__clear {
+    margin-top: 0.7rem;
+    padding-left: 1.7rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--navy-42);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.2s ease;
+  }
+
+  .frame-legend__clear:hover {
+    color: var(--navy-deep);
+  }
+
+  .frame-legend__clear[hidden] {
+    display: none;
+  }
+
+  /* --- right rail: space entries --- */
+
+  .frame-spaces {
+    align-items: flex-end;
+  }
+
+  .frame-spaces__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.6rem;
+    color: var(--navy-65);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 0.25s var(--ease-smooth),
+      color 0.25s var(--ease-smooth);
+  }
+
+  .frame-spaces__item:hover {
+    background: var(--navy-04);
+    color: var(--navy-deep);
+  }
+
+  .frame-spaces__item svg {
+    color: var(--navy-42);
+    transition: color 0.25s var(--ease-smooth);
+  }
+
+  .frame-spaces__item:hover svg {
+    color: var(--rose);
+  }
+
+  .frame-spaces__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    line-height: 1.15;
+  }
+
+  .frame-spaces__name {
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+  }
+
+  .frame-spaces__en {
+    font-size: 0.46rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--navy-42);
+  }
+
+  /* ---------------- collapse: <= 1023px ------------------------- */
+
+  /* Below 1024px the page is already narrow enough; the rails step
+     out of the way. Space entries stay reachable through the header
+     cluster + the menu drawer, chakra filtering through the
+     collapsed dot column below and the drawer. */
+  @media (max-width: 1023px) {
+    .frame-rail--right {
+      display: none;
+    }
+
+    .frame-rail--left {
+      gap: 0;
+    }
+
+    .frame-rail--left .frame-rail__kicker,
+    .frame-rail--left .frame-legend__name,
+    .frame-rail--left .frame-legend__count,
+    .frame-rail--left .frame-legend__clear {
+      display: none;
+    }
+
+    /* 7 dots, 30px wide: the chakra filter stays operable on a
+       phone without eating the map. Each dot carries its name in
+       aria-label + title, so nothing is actually lost. */
+    .frame-rail--left .frame-legend::before {
+      left: 14px;
+    }
+
+    .frame-rail--left .frame-legend__item {
+      width: 30px;
+      height: 34px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 0.45rem;
+    }
+
+    .frame-rail--left .frame-legend__dot {
+      width: 9px;
+      height: 9px;
+    }
+  }
+
+  /* ---------------- header responsive ---------------------------- */
+
+  @media (max-width: 1023px) {
+    .frame-space-trigger {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .frame-here {
+      padding-left: 0.7rem;
+    }
+
+    .frame-here-tag {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .frame-here-name {
+      font-size: 0.74rem;
+    }
+  }
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ------------------------------------------------------------
+   Unlayered on purpose (must beat @layer components + utilities)
+   and every rule that touches the pointer is inside
+   @media (pointer: fine). Touch devices keep the system cursor
+   and never load this behaviour at all — see atlas-cursor.tsx,
+   which returns null unless matchMedia("(pointer: fine)") hits.
+   ============================================================ */
+
+@media (pointer: fine) {
+  /* Native arrow is only suppressed while the layer is actually
+     mounted and fine-pointer capable. If JS never runs, this
+     attribute is absent and the system cursor is untouched. */
+  html[data-atlas-cursor="on"],
+  html[data-atlas-cursor="on"] * {
+    cursor: none;
+  }
+
+  /* Text entry keeps a real caret affordance; the ring hides. */
+  html[data-atlas-cursor="on"] input,
+  html[data-atlas-cursor="on"] textarea,
+  html[data-atlas-cursor="on"] select,
+  html[data-atlas-cursor="on"] [contenteditable="true"] {
+    cursor: auto;
+  }
+
+  .atlas-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+    transition: opacity 0.2s ease;
+    color: var(--navy-42);
+  }
+
+  .atlas-cursor[data-state="idle"],
+  .atlas-cursor[data-state="node"],
+  .atlas-cursor[data-state="drag"],
+  .atlas-cursor[data-state="grab"] {
+    opacity: 1;
+  }
+
+  /* Ring: thin, low contrast, the mineral crosshair. */
+  .atlas-cursor__ring {
+    position: absolute;
+    top: -11px;
+    left: -11px;
+    width: 22px;
+    height: 22px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    transform: scale(1);
+    transition:
+      transform 0.32s var(--ease-expo),
+      border-color 0.32s var(--ease-smooth),
+      opacity 0.2s ease;
+  }
+
+  /* Centre dot — the only solid mark in the default state. */
+  .atlas-cursor__dot {
+    position: absolute;
+    top: -1.5px;
+    left: -1.5px;
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    transition:
+      transform 0.32s var(--ease-expo),
+      background 0.2s ease;
+  }
+
+  /* Hovering a crystal node: the ring opens up and the stone name
+     rides beside the pointer. */
+  .atlas-cursor[data-state="node"] .atlas-cursor__ring {
+    transform: scale(1.9);
+    border-color: var(--navy-65);
+  }
+
+  .atlas-cursor[data-state="node"] {
+    color: var(--navy-65);
+  }
+
+  .atlas-cursor__label {
+    position: absolute;
+    top: 0;
+    left: 22px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--navy-12);
+    box-shadow: var(--shadow-card);
+    font-family: var(--font-serif);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    color: var(--navy-deep);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.94);
+    transform-origin: left center;
+    transition:
+      opacity 0.22s var(--ease-smooth),
+      transform 0.28s var(--ease-expo);
+  }
+
+  .atlas-cursor[data-state="node"] .atlas-cursor__label {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  /* Hovering a draggable region: the ring becomes an open arc and
+     turns slowly — "this rotates", not "this clicks". */
+  .atlas-cursor[data-state="drag"] {
+    color: var(--navy-65);
+  }
+
+  .atlas-cursor[data-state="drag"] .atlas-cursor__ring {
+    transform: scale(1.45) rotate(0deg);
+    border-color: transparent;
+    border-top-color: var(--navy-65);
+    border-right-color: var(--navy-20);
+    animation: atlas-cursor-turn 2.6s linear infinite;
+  }
+
+  .atlas-cursor[data-state="drag"] .atlas-cursor__dot {
+    transform: scale(0.6);
+    background: var(--navy-20);
+  }
+
+  @keyframes atlas-cursor-turn {
+    to {
+      transform: scale(1.45) rotate(360deg);
+    }
+  }
+
+  /* Pressing: the ring collapses into a solid dot (grabbing). */
+  .atlas-cursor[data-state="grab"] {
+    color: var(--navy);
+  }
+
+  .atlas-cursor[data-state="grab"] .atlas-cursor__ring {
+    transform: scale(0.32);
+    background: var(--navy-65);
+    border-color: transparent;
+  }
+
+  .atlas-cursor[data-state="grab"] .atlas-cursor__dot {
+    opacity: 0;
+  }
+
+  .atlas-cursor[data-state="grab"] .atlas-cursor__label {
+    opacity: 0;
+  }
+
+  /* Reduced motion: the arc stops turning, everything snaps. The
+     pointer stays fully legible — only the motion is removed. */
+  @media (prefers-reduced-motion: reduce) {
+    .atlas-cursor,
+    .atlas-cursor__ring,
+    .atlas-cursor__dot,
+    .atlas-cursor__label {
+      transition: none;
+    }
+
+    .atlas-cursor[data-state="drag"] .atlas-cursor__ring {
+      animation: none;
+      transform: scale(1.45);
+    }
+  }
+}
+
+/* Keyboard focus must never get quieter because the mouse pointer
+   disappeared. These live outside the pointer media query on
+   purpose — they are for focus, not for hover. */
+@media (pointer: fine) {
+  .frame-here a:focus-visible,
+  .frame-header-spaces a:focus-visible,
+  .frame-space-trigger:focus-visible,
+  .frame-spaces__item:focus-visible,
+  .frame-legend__item:focus-visible,
+  .frame-legend__clear:focus-visible {
+    outline: 2px solid var(--wash);
+    outline-offset: 3px;
+  }
+}

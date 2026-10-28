@@ -9,6 +9,7 @@ import {
   Link2,
   ChevronDown,
   Gem,
+  Sparkles,
 } from "lucide-react";
 import { TOTAL_STONES, TOTAL_VARIANTS } from "@/lib/stones-data";
 import { t, STONE_ZH, type Lang } from "@/lib/i18n";
@@ -181,26 +182,39 @@ export function AtlasNotes({
                 </span>
               </button>
             </div>
-            <a
-              href="#"
-              className="atlas-cta atlas-pairday__cta"
-              onClick={(e) => {
-                e.preventDefault();
-                onPairStudio(pair.a.slug, pair.b.slug);
-              }}
-              aria-label={dict.pairDayAria(
-                stoneName(pair.a.slug, pair.a.displayName),
-                stoneName(pair.b.slug, pair.b.displayName),
-              )}
-            >
-              <Wand2 className="h-4 w-4" />
-              <span>{dict.pairDayCta}</span>
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
+            <div className="flex flex-col gap-2 mt-4">
+              <a
+                href={`/crystals/custom/?stone=${pair.a.slug}&accent=${pair.b.slug}`}
+                className="atlas-cta atlas-pairday__cta group flex items-center justify-between px-4 py-3 rounded-xl bg-[#14243b] text-white font-medium hover:bg-[#1e3a5f] shadow-[0_4px_16px_rgba(20,36,59,0.14)] hover:scale-[1.01] transition-all"
+                aria-label={dict.customMadePairCta(stoneName(pair.b.slug, pair.b.displayName))}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-[var(--rose)]" />
+                  <span>{dict.customMadePairCta(stoneName(pair.b.slug, pair.b.displayName))}</span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 text-[var(--rose)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+
+              <a
+                href="#"
+                className="atlas-cta atlas-cta--ghost atlas-pairday__cta text-center justify-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onPairStudio(pair.a.slug, pair.b.slug);
+                }}
+                aria-label={dict.pairDayAria(
+                  stoneName(pair.a.slug, pair.a.displayName),
+                  stoneName(pair.b.slug, pair.b.displayName),
+                )}
+              >
+                <Wand2 className="h-3.5 w-3.5" />
+                <span>{dict.pairDayCta}</span>
+              </a>
+            </div>
           </div>
         )}
 
-        <div className="mt-8 border-t border-[rgba(246,238,226,0.1)] pt-5">
+        <div className="mt-8 border-t border-[rgba(30,58,95,0.08)] pt-5">
           <h3 className="atlas-section-label">{dict.howToRead}</h3>
           <p className="atlas-note-row">{dict.howTo1}</p>
           <p className="atlas-note-row">{dict.howTo2}</p>
@@ -208,7 +222,7 @@ export function AtlasNotes({
         </div>
 
         {/* Weekly review — the last seven featured crystals */}
-        <div className="mt-8 border-t border-[rgba(246,238,226,0.1)] pt-5">
+        <div className="mt-8 border-t border-[rgba(30,58,95,0.08)] pt-5">
           <div className="atlas-week__head">
             <h3 className="atlas-section-label">{dict.weekTitle}</h3>
             <button
@@ -311,7 +325,7 @@ export function AtlasNotes({
         </div>
         {/* Week of Pairs — seven days of featured duos */}
         {pairs.length > 0 && (
-          <div className="mt-8 border-t border-[rgba(246,238,226,0.1)] pt-5">
+          <div className="mt-8 border-t border-[rgba(30,58,95,0.08)] pt-5">
             <div className="atlas-week__head">
               <h3 className="atlas-section-label">
                 <Link2 className="h-3.5 w-3.5" aria-hidden="true" />

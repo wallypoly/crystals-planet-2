@@ -4,7 +4,7 @@
 
 Task ID: 1
 Agent: Z.ai Code (main)
-Task: 复刻 https://www.moonarqstudio.com/crystals 的内容与设计（Interactive Crystal Atlas / Crystal Library）
+Task: 复刻参考站点 /crystals 页面的内容与设计（Interactive Crystal Atlas / Crystal Library）
 
 Work Log:
 - 用 page_reader + agent-browser 抓取并截图原站，提取 ld+json 与 RSC flight 数据，获得全部 17 颗水晶的完整资料（名称、颜色族、palette、轨道 ring/angle/cluster/intensity、intro、keywords、properties、pairingNotes、build/source sizes、grades、82 个变体统计、CTA 文案）
@@ -14,7 +14,7 @@ Work Log:
 - 重写 `src/app/globals.css`：暗色宇宙主题（@layer components 包裹自定义样式）、跑马灯/星野/漂移/连线绘制/面板滑入等动画、桌面椭圆轨道 + 移动端同心圆轨道响应式、自定义滚动条
 - 组件化构建：
   - `ticker.tsx` 顶部 WELCOME10 无缝跑马灯
-  - `site-header.tsx` 汉堡菜单（shadcn Sheet 抽屉含 4 组导航）、MoonArq 手写体 Logo、中心 CRYSTAL ATLAS 品牌、Cart/Account/Build chips
+  - `site-header.tsx` 汉堡菜单（shadcn Sheet 抽屉含 4 组导航）、手写体 Logo、中心 CRYSTAL ATLAS 品牌、Cart/Account/Build chips
   - `brand-mark.tsx` 新月+叶片 SVG Logo（useId 防 mask id 冲突）
   - `atlas-map.tsx` 核心交互地图：伪 3D 椭圆轨道（ring 半径/深度缩放/亮度/z-index）、17 节点漂移动画、SVG 渐变星座连线（选中高亮）、滚轮/拖拽旋转（惯性衰减）、键盘左右键旋转、ResizeObserver 驱动的移动端像素级同心圆布局
   - `atlas-detail.tsx` 详情面板：前/后切换+计数、大图+SKU 徽章、palette 驱动的 kicker 配色、规格四宫格、Symbolic Styling / Pairing Ideas、Build CTA
@@ -33,7 +33,7 @@ Work Log:
   9. 多次遭遇 Turbopack CSS 陈旧缓存（改 CSS 后浏览器仍用旧规则）→ rm -rf .next 重启解决；还遇到 next/font/google 缓存损坏报错，深度清理后恢复
 
 Stage Summary:
-- 已完成 MoonArq Crystal Library 的 1:1 复刻：内容（17 stones / 82 variants、全部编辑文案、真实珠子图）与设计（暗色宇宙轨道、金色衬线排版、交互式星图）均已还原
+- 已完成 Crystal Library 的 1:1 复刻：内容（17 stones / 82 variants、全部编辑文案、真实珠子图）与设计（暗色宇宙轨道、金色衬线排版、交互式星图）均已还原
 - 全部交互经浏览器验证：滚轮/拖拽（带惯性）旋转、节点点击详情、前后导航、Atlas Notes、键盘可达性（方向键旋转、Escape 关闭、aria 标签完整）、移动端底部抽屉与拖拽
 - 桌面 1280x800 与移动 390x844 截图对比原站高度一致；lint 0 错误；dev.log 无运行时错误
 - 关键文件：src/lib/stones-data.ts、src/components/crystal/*（7 个组件）、src/app/page.tsx、globals.css
@@ -130,11 +130,11 @@ Work Log:
 - i18n：新增 dailyKicker/dailyCta/dailyAria/dailyBadge、pairHint、shareStone、exportPng/exported/exportHint 双语词条
 - 功能 1 — URL 深链接：crystal-atlas.tsx 挂载 microtask 解析 ?stone=slug 自动打开详情；selectedSlug 变化时 history.replaceState 同步/清除参数（不污染历史栈）；详情面板新增"复制本颗水晶链接"按钮（Link2 图标，复制 /?stone=slug，成功打勾反馈）
   - 修复挂载时序 bug：URL 同步 effect 原本在 init microtask 之前运行，会把尚未读取的 ?stone= 参数删掉 → 加 favLoadedRef 守卫，init 消费完参数后再同步
-- 功能 2 — pairing 星座连线：atlas-map.tsx 新增 buildPairLines（选中节点 → 各伙伴的渐变虚线，双层动画 pair-draw 入场 + pair-flow 流动），独立 SVG 层 + 独立渐变 defs，金色辉光 drop-shadow；详情面板 Pairing Ideas 重构为可点击行（matchPartner 按 EN/中文名前缀匹配出伙伴 slug，色点 + 虚线下划线 + hover 辉光，点击直达伙伴节点；"Nearly every MoonArq palette" 等非宝石条目保持纯文本）
+- 功能 2 — pairing 星座连线：atlas-map.tsx 新增 buildPairLines（选中节点 → 各伙伴的渐变虚线，双层动画 pair-draw 入场 + pair-flow 流动），独立 SVG 层 + 独立渐变 defs，金色辉光 drop-shadow；详情面板 Pairing Ideas 重构为可点击行（matchPartner 按 EN/中文名前缀匹配出伙伴 slug，色点 + 虚线下划线 + hover 辉光，点击直达伙伴节点；"Nearly every palette" 等非宝石条目保持纯文本）
 - 功能 3 — 今日水晶：左上文案区新增 atlas-daily 卡片（珠图 + ✨CRYSTAL OF THE DAY/今日水晶 + 衬线名 + CTA，金色描边玻璃卡，点击打开详情）；地图对应节点自动获得 is-daily 金环辉光 + daily-breathe 呼吸动画 + 左上角 Sparkles 星标 chip（aria/tooltip 齐全）；Atlas Notes 的 "Guided Bracelet Design" 从死链接通 openGuided：按今日水晶色系匹配预设（FAMILY_PRESET 映射 10 色系 → 5 预设）预载工作台并命名 "Guided · X / 今日灵感 · X"；"Build Your Own" 同时接通 openStudio
 - 功能 4 — 手链导出 PNG：bracelet-studio.tsx 新增导出按钮（ImageDown 图标，actions 行第 4 位）；实现：克隆 SVG → fetch 同源珠图转 dataURL 内联（带缓存）→ 序列化 → Image 光栅化到 1200x1420 canvas → 径向渐变暗背景 + 金色 kicker + 衬线标题（设计名或 "Bracelet Studio"）+ 统计行（珠数/内圈长度/腕围）→ toBlob 下载；导出中 "…" 与完成 "Saved ✓/已保存 ✓" 状态反馈
 - 样式（globals.css 追加约 240 行）：pair 线动画与辉光、每日节点金环/星标/呼吸、atlas-daily 卡（桌面 320px / 移动全宽紧凑双档）、atlas-pair-link 色点+虚线+辉光、分享按钮金色 is-active、reduced-motion 停用 pair-flow/呼吸
-- QA 验证（全部通过）：深链接 ?stone=sunstone 直开详情且 URL 保留；关闭详情 URL 清回 /；点击今日卡片开灰月光详情；pair 线从选中节点连向 3 伙伴（截图确认发光虚线）；搭配链接点击白水晶 → 详情与 URL 同步跳转；引导流 → 工作台预载 24 珠午夜烟霞 + 名称"今日灵感 · 灰月光"；导出 PNG 真实下载 1.2MB 卡片图（~/Downloads/moonarq-bracelet-*.png，背景/手链/排版/统计全部正确）；中英双语全量切换；移动端今日卡片紧凑布局与节点星标正常；网格视图 17 卡回归正常；lint 0 错误；dev.log 无错误；测试后 localStorage 已清理
+- QA 验证（全部通过）：深链接 ?stone=sunstone 直开详情且 URL 保留；关闭详情 URL 清回 /；点击今日卡片开灰月光详情；pair 线从选中节点连向 3 伙伴（截图确认发光虚线）；搭配链接点击白水晶 → 详情与 URL 同步跳转；引导流 → 工作台预载 24 珠午夜烟霞 + 名称"今日灵感 · 灰月光"；导出 PNG 真实下载 1.2MB 卡片图（~/Downloads/bracelet-*.png，背景/手链/排版/统计全部正确）；中英双语全量切换；移动端今日卡片紧凑布局与节点星标正常；网格视图 17 卡回归正常；lint 0 错误；dev.log 无错误；测试后 localStorage 已清理
 
 Stage Summary:
 - 新增四大功能：?stone= 可分享深链接（含面板一键复制）、pairing 搭配星座连线 + 可点击搭配伙伴、每日水晶（卡片/节点星标/guided 引导流三处联动）、手链设计导出 PNG 分享卡片
@@ -390,7 +390,7 @@ Work Log:
 - ✨ 功能 2 — 手链设计 JSON 备份（落地 Round 10 建议④"服务端设计导出/备份"）：
   - bracelet.ts 新增 serializeDesignsBackup（app/kind/version/exportedAt + 紧凑 [slug,mm] 珠数据）/ parseDesignsBackup（slug+mm 白名单校验、空珠条目丢弃、96 条/64 珠上限、损坏 JSON 返回 []）
   - bracelet-studio.tsx "Saved designs" 标题行新增 Backup/Import 胶囊按钮（Download/Upload 图标，saved 为空时导出禁用）+ 隐藏 file input
-  - 导出：Blob 下载 `moonarq-bracelet-designs-YYYYMMDD.json` + "Backup downloaded/备份已下载" toast；导入：签名去重合并（容量按 24-现有 余量裁剪）+ 逐条 fire-and-forget POST 云端 + "N designs imported, M skipped/已导入 N 条设计，跳过 M 条" toast；无效文件 "That file doesn't look like a design backup/这个文件看起来不是设计备份" toast
+  - 导出：Blob 下载 `bracelet-designs-YYYYMMDD.json` + "Backup downloaded/备份已下载" toast；导入：签名去重合并（容量按 24-现有 余量裁剪）+ 逐条 fire-and-forget POST 云端 + "N designs imported, M skipped/已导入 N 条设计，跳过 M 条" toast；无效文件 "That file doesn't look like a design backup/这个文件看起来不是设计备份" toast
 - ✨ 功能 3 — 收藏夹搭配建议 "They pair well/它们很搭"：
   - favorites-drawer.tsx 新增 onPairStudio prop（可选）+ atlas-favsug 区块：计算收藏集合内的编辑搭配对（pairs 图 ∩ 收藏集，无序 key 去重，最多 4 条），每条 chip = 双珠图（palette 辉光）+ 双名 + Link2 图标，点击 → Studio 双珠预载并关闭抽屉？保留抽屉在 Studio 关闭后回到收藏夹（层级合理）
 - 🐛 本轮发现并修复 bug — 收藏建议漏配：初版用 `s.slug < p` 字典序去重，但数据中 pairs 图并非严格双向对称（如 blue-tigers-eye 列出 aquamarine 而反向没有），导致这类边被跳过（收藏 海蓝宝+蓝虎眼 时建议区为空）→ 改为 [s.slug, p].sort() 无序 key 去重后正确显示

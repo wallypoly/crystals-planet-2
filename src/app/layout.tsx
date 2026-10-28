@@ -41,20 +41,22 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
-  title: "Interactive Crystal Atlas | Crystal Library",
+  title: "UNIQorn 水晶矿石图鉴 · 交互式能量星图 | UNIQorn Soul Wellness",
   description:
-    "Explore the bead library as an interactive crystal atlas with real stone images, color notes, symbolic styling, and builder-ready size variants.",
+    "UNIQorn 交互式水晶矿石星图图鉴：探索天然原矿能量、对应脉轮、莫氏硬度与能量搭配灵感，支持挑选晶石量身开启私人手串高定 (Custom Made)。",
   keywords: [
-    "crystal library",
-    "crystal atlas",
-    "gemstone bracelet",
-    "beaded bracelet",
-    "build your own bracelet",
+    "UNIQorn 水晶",
+    "水晶科普",
+    "天然水晶手串",
+    "手串定制",
+    "Custom Made Bracelet",
+    "脉轮水晶",
+    "水晶能量图鉴",
   ],
   openGraph: {
-    title: "Interactive Crystal Atlas | Crystal Library",
+    title: "UNIQorn 水晶矿石图鉴 · 交互式能量星图",
     description:
-      "Explore the bead library as an interactive crystal atlas with real stone images, color notes, symbolic styling, and builder-ready size variants.",
+      "探索天然原矿能量、对应脉轮、莫氏硬度与能量搭配灵感，支持挑选晶石量身开启私人手串高定 (Custom Made)。",
     type: "website",
   },
 };

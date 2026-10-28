@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Search, ArrowRight, ArrowUpDown, Library, Heart, Ruler, Palette, ChevronLeft, ChevronRight, CalendarDays, Undo2 } from "lucide-react";
+import { X, Search, ArrowRight, ArrowUpDown, Library, Heart, Ruler, Palette, ChevronLeft, ChevronRight, CalendarDays, Undo2, Sparkles } from "lucide-react";
 import { STONES, type Stone } from "@/lib/stones-data";
 import { pairOfDay } from "@/lib/daily";
 import {
@@ -145,6 +145,14 @@ export function CodexOverlay({
   }));
   const undated = STONES.filter((s) => s.birthstone === null && ok(s));
 
+  /* Compare view — all stones on one shared 0–10 Mohs ruler, hardest first */
+  const compareStones = STONES.filter(ok)
+    .map((s) => ({ stone: s, range: parseHardness(s.hardness) }))
+    .filter((r): r is { stone: Stone; range: { min: number; max: number } } =>
+      Boolean(r.range),
+    )
+    .sort((a, b) => b.range.max - a.range.max || b.range.min - a.range.min);
+
   const anyResults =
     archiveStones.length > 0 ||
     chakraGroups.some((g) => g.stones.length > 0) ||
@@ -197,14 +205,6 @@ export function CodexOverlay({
   const almIsToday = (d: number) => monthOffset === 0 && d === today.getDate();
   const almIsWeekend = (wd: number) => wd === 0 || wd === 6;
   const almJump = (delta: number) => setMonthOffset((m) => m + delta);
-
-  /* Compare view — all stones on one shared 0–10 Mohs ruler, hardest first */
-  const compareStones = STONES.filter(ok)
-    .map((s) => ({ stone: s, range: parseHardness(s.hardness) }))
-    .filter((r): r is { stone: Stone; range: { min: number; max: number } } =>
-      Boolean(r.range),
-    )
-    .sort((a, b) => b.range.max - a.range.max || b.range.min - a.range.min);
 
   return (
     <div className="codex-overlay" role="presentation">
@@ -408,14 +408,24 @@ export function CodexOverlay({
                       </span>
                     </div>
                   )}
-                  <button
-                    type="button"
-                    className="codex-card__cta"
-                    onClick={() => onVisitStone(s.slug)}
-                  >
-                    {dict.codexViewInAtlas}
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
+                  <div className="codex-card__actions mt-3 flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="codex-card__cta flex-1"
+                      onClick={() => onVisitStone(s.slug)}
+                    >
+                      {dict.codexViewInAtlas}
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <a
+                      href={`/crystals/custom/?stone=${s.slug}`}
+                      className="codex-card__cta codex-card__cta--custom flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#14243b] hover:bg-[#1e3a5f] text-white text-[0.72rem] tracking-wider transition-all border border-[#14243b] shadow-[0_4px_16px_rgba(20,36,59,0.14)]"
+                      title={dict.customMadeCta(nameOf(s))}
+                    >
+                      <Sparkles className="h-3 w-3 text-(--rose)" />
+                      <span>定制手串</span>
+                    </a>
+                  </div>
                 </article>
               ))}
             </div>
@@ -540,7 +550,7 @@ export function CodexOverlay({
                     dim === "chakra"
                       ? (chakraColor ?? s.palette[1])
                       : dim === "month"
-                        ? (monthColor ?? "rgba(214, 196, 150, 0.4)")
+                        ? (monthColor ?? "rgba(30, 58, 95, 0.2)")
                         : s.palette[1];
                   const c2 =
                     dim === "color"

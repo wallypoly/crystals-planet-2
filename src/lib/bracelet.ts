@@ -224,7 +224,7 @@ const BACKUP_STONES = new Map(
 export function serializeDesignsBackup(designs: BraceletDesign[]): string {
   return JSON.stringify(
     {
-      app: "moonarq-crystal-atlas",
+      app: "uniqorn-crystal-atlas",
       kind: "bracelet-designs",
       version: 1,
       exportedAt: new Date().toISOString(),
@@ -264,7 +264,8 @@ export function parseDesignsBackup(raw: string): BraceletDesign[] {
           slug = o.slug;
           mm = o.mm;
         }
-        const allowed = typeof slug === "string" ? BACKUP_STONES.get(slug) : undefined;
+        if (typeof slug !== "string") continue;
+        const allowed = BACKUP_STONES.get(slug);
         if (!allowed) continue;
         if (typeof mm !== "number" || !allowed.has(mm)) continue;
         beads.push({ slug, mm, j: 0 });
